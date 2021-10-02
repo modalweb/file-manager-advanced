@@ -3448,40 +3448,43 @@ var elFinder = function(elm, opts, bootCallback) {
 			clearTimeout(heightBase.data('resizeTm'));
 		}
 		
-		if (typeof h === 'string') {
-			if (mt = h.match(/^([0-9.]+)%$/)) {
-				// setup heightBase
-				if (! heightBase || ! heightBase.length) {
-					heightBase = $(window);
+		if (! self.options.noResizeBySelf) {
+			if (typeof h === 'string') {
+				if (mt = h.match(/^([0-9.]+)%$/)) {
+					// setup heightBase
+					if (! heightBase || ! heightBase.length) {
+						heightBase = $(window);
+					}
+					if (! heightBase.data('marginToMyNode')) {
+						heightBase.data('marginToMyNode', getMargin());
+					}
+					if (! heightBase.data('fitToBaseFunc')) {
+						heightBase.data('fitToBaseFunc', function(e) {
+							var tm = heightBase.data('resizeTm');
+							e.preventDefault();
+							e.stopPropagation();
+							tm && cancelAnimationFrame(tm);
+							if (! node.hasClass('elfinder-fullscreen') && (!self.UA.Mobile || heightBase.data('rotated') !== self.UA.Rotated)) {
+								heightBase.data('rotated', self.UA.Rotated);
+								heightBase.data('resizeTm', requestAnimationFrame(function() {
+									self.restoreSize();
+								}));
+							}
+						});
+					}
+					if (typeof heightBase.data('rotated') === 'undefined') {
+						heightBase.data('rotated', self.UA.Rotated);
+					}
+					h = heightBase.height() * (mt[1] / 100) - heightBase.data('marginToMyNode');
+					
+					heightBase.off('resize.' + self.namespace, heightBase.data('fitToBaseFunc'));
+					fit && heightBase.on('resize.' + self.namespace, heightBase.data('fitToBaseFunc'));
 				}
-				if (! heightBase.data('marginToMyNode')) {
-					heightBase.data('marginToMyNode', getMargin());
-				}
-				if (! heightBase.data('fitToBaseFunc')) {
-					heightBase.data('fitToBaseFunc', function(e) {
-						var tm = heightBase.data('resizeTm');
-						e.preventDefault();
-						e.stopPropagation();
-						tm && cancelAnimationFrame(tm);
-						if (! node.hasClass('elfinder-fullscreen') && (!self.UA.Mobile || heightBase.data('rotated') !== self.UA.Rotated)) {
-							heightBase.data('rotated', self.UA.Rotated);
-							heightBase.data('resizeTm', requestAnimationFrame(function() {
-								self.restoreSize();
-							}));
-						}
-					});
-				}
-				if (typeof heightBase.data('rotated') === 'undefined') {
-					heightBase.data('rotated', self.UA.Rotated);
-				}
-				h = heightBase.height() * (mt[1] / 100) - heightBase.data('marginToMyNode');
-				
-				heightBase.off('resize.' + self.namespace, heightBase.data('fitToBaseFunc'));
-				fit && heightBase.on('resize.' + self.namespace, heightBase.data('fitToBaseFunc'));
 			}
+			
+			node.css({ width : w, height : parseInt(h) });
 		}
-		
-		node.css({ width : w, height : parseInt(h) });
+
 		size.w = Math.round(node.width());
 		size.h = Math.round(node.height());
 		node.data('resizeSize', size);
@@ -4971,7 +4974,8 @@ var elFinder = function(elm, opts, bootCallback) {
 		 * @return     String  The column name.
 		 */
 		self.getColumnName = function(key) {
-			return columnNames[key] || self.i18n(key);
+			var res = columnNames[key] || self.i18n(key);
+			return typeof res === 'function'? res() : res;
 		};
 
 		/**
@@ -5178,12 +5182,14 @@ var elFinder = function(elm, opts, bootCallback) {
 					}
 					
 					$(document).on(keyEvt, function(e){
-						var chk = (e.shiftKey||e.ctrlKey||e.metaKey);
-						if (ctr !== chk) {
-							ctr = chk;
-							if (helper.is(':visible') && helper.data('dropover') && ! helper.data('droped')) {
-								helper.toggleClass('elfinder-drag-helper-plus', helper.data('locked')? true : ctr);
-								self.trigger(ctr? 'unlockfiles' : 'lockfiles', {files : hashes, helper: helper});
+						if (self._commands.copy) {
+							var chk = (e.shiftKey||e.ctrlKey||e.metaKey);
+							if (ctr !== chk) {
+								ctr = chk;
+								if (helper.is(':visible') && helper.data('dropover') && ! helper.data('droped')) {
+									helper.toggleClass('elfinder-drag-helper-plus', helper.data('locked')? true : ctr);
+									self.trigger(ctr? 'unlockfiles' : 'lockfiles', {files : hashes, helper: helper});
+								}
 							}
 						}
 					});
@@ -8930,6 +8936,11 @@ elFinder.prototype = {
 				kind = 'Root';
 			} else {
 				kind = this.kinds[mime];
+			}
+		} else if (this.mimeTypes[mime]) {
+			kind = this.mimeTypes[mime].toUpperCase();
+			if (!this.messages['kind'+kind]) {
+				kind = null;
 			}
 		}
 		if (! kind) {
