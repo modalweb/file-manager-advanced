@@ -3,7 +3,7 @@ $settings = $this->get();
 $locales = $this->langs->locales();
 $path = str_replace('\\','/', ABSPATH);
 $url = site_url();
-$type = (isset($_GET['status']) && !empty($_GET['status']) ? $_GET['status'] : '' );
+$type = (isset($_GET['status']) && !empty($_GET['status']) ? intval($_GET['status']) : '' );
 $bool = ($type == '2') ? 'Unable to save settings.' : 'Settings updated successfully.';
 $roles = $this->wpUserRoles();
 ?>

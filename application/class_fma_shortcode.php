@@ -53,7 +53,7 @@ class class_fma_shortcode {
 			 }
 			 if($pathtype == 'outside') {
 				 $paths = $pa;
-				 $root = !empty($_REQUEST['url']) ? $_REQUEST['url'] : site_url().'/'.$pa;
+				 $root = !empty($_REQUEST['url']) ? esc_url_raw($_REQUEST['url']) : site_url().'/'.$pa;
 			 } else {
 				 $paths = $path;
 			 }

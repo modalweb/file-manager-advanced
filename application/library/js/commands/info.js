@@ -223,36 +223,7 @@
 			!hideItems.owner && file.owner && content.push(row.replace(l, msg.owner).replace(v, file.owner));
 			!hideItems.group && file.group && content.push(row.replace(l, msg.group).replace(v, file.group));
 			!hideItems.perm && file.perm && content.push(row.replace(l, msg.perm).replace(v, fm.formatFileMode(file.perm)));
-			
-			// Get MD5, SHA hashes
-			if (window.ArrayBuffer && (fm.options.cdns.sparkmd5 || fm.options.cdns.jssha) && file.mime !== 'directory' && file.size > 0 && (!o.showHashMaxsize || file.size <= o.showHashMaxsize)) {
-				getHashAlgorisms = [];
-				$.each(fm.storage('hashchekcer') || o.showHashAlgorisms, function(i, n) {
-					if (!file[n]) {
-						content.push(row.replace(l, fm.i18n(n)).replace(v, tpl.spinner.replace('{text}', msg.calc).replace('{name}', n)));
-						getHashAlgorisms.push(n);
-					} else {
-						content.push(row.replace(l, fm.i18n(n)).replace(v, file[n]).replace('{class}', hashClass));
-					}
-				});
-
-				if (getHashAlgorisms.length) {
-					hashProg = $('<div class="elfinder-quicklook-info-progress"></div>');
-					reqs.push(
-						fm.getContentsHashes(file.hash, getHashAlgorisms, o.showHashOpts, { progressBar : hashProg }).progress(function(hashes) {
-							$.each(getHashAlgorisms, function(i, n) {
-								if (hashes[n]) {
-									replSpinner(hashes[n], n, hashClass);
-								}
-							});
-						}).always(function() {
-							$.each(getHashAlgorisms, function(i, n) {
-								replSpinner(msg.unknown, n);
-							});
-						})
-					);
-				}
-			}
+		
 			
 			// Add custom info fields
 			if (o.custom) {

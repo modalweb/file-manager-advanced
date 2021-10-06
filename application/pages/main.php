@@ -1,9 +1,13 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit;
 $settings = get_option('fmaoptions');
 $path = str_replace('\\','/', ABSPATH);
+$fma_locale = 'en';
+if(isset($settings['fma_locale'])) {
+  $fma_locale = $settings['fma_locale'];  
+}
 ?>
 <input type="hidden" name="_fmakey" id="fmakey" value="<?php echo wp_create_nonce( 'fmaskey' ); ?>">
-<input type="hidden" name="fma_locale" id="fma_locale" value="<?php echo isset($settings['fma_locale']) ? $settings['fma_locale'] : 'en';?>">
+<input type="hidden" name="fma_locale" id="fma_locale" value="<?php echo esc_attr__($fma_locale, 'file-manager-advanced');?>">
 <div class="wrap fma">
 <h2><?php _e('Advanced File Manager','file-manager-advanced')?>
 

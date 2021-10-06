@@ -206,8 +206,8 @@
 						  </tr>
 						  <?php foreach($locales as $lang => $code) {?>
 						  <tr>
-						  <td><?php echo $lang;?></td>
-						  <td><code><?php echo $code;?></code></td>
+						  <td><?php echo esc_attr__($lang, 'file-manager-advanced');?></td>
+						  <td><code><?php  echo esc_attr__($code, 'file-manager-advanced');?></code></td>
 						  </tr>
 						  <?php } ?>
 						  </table>

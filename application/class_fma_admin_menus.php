@@ -89,7 +89,7 @@ class class_fma_admin_menus {
 	   if(isset($_POST['submit']) && wp_verify_nonce( $_POST['_fmaform'], 'fmaform' )) {
 		    _e('Saving Options, Please Wait...','file-manager-advanced');
 		   $save = array();
-		   $save['fma_user_roles'] = isset($_POST['fma_user_role']) ? ($_POST['fma_user_role']) : array('administrator');
+		   $save['fma_user_roles'] = isset($_POST['fma_user_role']) ? array_map('sanitize_text_field',$_POST['fma_user_role']) : array('administrator');
 		   $save['fma_theme'] = isset($_POST['fma_theme']) ? sanitize_text_field($_POST['fma_theme']) : 'light';
 		   $save['fma_locale'] = isset($_POST['fma_locale']) ? sanitize_text_field($_POST['fma_locale']) : 'en';
 		   $save['public_path'] = isset($_POST['public_path']) ? sanitize_text_field($_POST['public_path']) : '';
@@ -126,9 +126,13 @@ class class_fma_admin_menus {
 	* Redirection
     */
     public function f($u) {
-		echo '<script>';
-		echo 'window.location.href="'.$u.'"';
-		echo '</script>';
+		$url = esc_url_raw($u);
+		wp_register_script( 'fma-redirect-script', '');
+		wp_enqueue_script( 'fma-redirect-script' );
+		wp_add_inline_script(
+		'fma-redirect-script',
+		' window.location.href="'.$url.'" ;'
+	  );
 	}
 	/**
 	 * Get User Roles

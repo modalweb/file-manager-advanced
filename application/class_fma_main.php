@@ -29,7 +29,7 @@ class class_fma_main {
 				 }
 			}
 			public function fma_scripts() {
-				$pageNow = isset($_GET['page']) ? $_GET['page'] : '';
+				$pageNow = isset($_GET['page']) ?  sanitize_text_field(htmlentities($_GET['page'])) : '';
 				if('file_manager_advanced_ui' == $pageNow) {
 
 					$elfCss = [
@@ -66,11 +66,10 @@ class class_fma_main {
 				}
 			    wp_enqueue_style( 'fma_custom', plugins_url('library/css/custom_style_filemanager_advanced.css', __FILE__));
 
-				wp_enqueue_script( 'afm-jquery-1.12.4', plugins_url('library/jquery/jquery-1.12.4.js', __FILE__));
-
-				wp_enqueue_script( 'afm-jquery-ui-1.12.0', plugins_url('library/jquery/jquery-ui-1.12.0.js', __FILE__));
+				wp_enqueue_script('afm-init-jquery', plugins_url('library/js/init.js', __FILE__));
 			
-				wp_enqueue_script( 'afm-elFinder', plugins_url('library/js/elFinder.js', __FILE__));
+				wp_enqueue_script( 'afm-elFinder', plugins_url('library/js/elFinder.js', __FILE__), array('jquery', 'jquery-ui-core', 'jquery-ui-selectable', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-resizable', 'jquery-ui-dialog', 'jquery-ui-slider', 'jquery-ui-tabs'));
+
 				wp_enqueue_script( 'afm-elFinder.version', plugins_url('library/js/elFinder.version.js', __FILE__));
 				wp_enqueue_script( 'afm-jquery.elfinder', plugins_url('library/js/jquery.elfinder.js', __FILE__));
 				wp_enqueue_script( 'afm-elFinder.mimetypes', plugins_url('library/js/elFinder.mimetypes.js', __FILE__));
