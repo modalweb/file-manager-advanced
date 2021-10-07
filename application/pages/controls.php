@@ -4,7 +4,7 @@ $locales = $this->langs->locales();
 $path = str_replace('\\','/', ABSPATH);
 $url = site_url();
 $type = (isset($_GET['status']) && !empty($_GET['status']) ? intval($_GET['status']) : '' );
-$bool = ($type == '2') ? 'Unable to save settings.' : 'Settings updated successfully.';
+$message = ($type == '2') ? 'Unable to save settings.' : 'Settings updated successfully.';
 $roles = $this->wpUserRoles();
 ?>
 <div class="wrap fma" style="background:#fff; padding: 20px; border:1px solid #ccc;">
@@ -13,8 +13,18 @@ $roles = $this->wpUserRoles();
 <span id="thankyou"><?php _e('Thank you for using <a href="https://wordpress.org/plugins/file-manager-advanced/">File Manager Advanced</a>. If happy then ','file-manager-advanced')?>
 <a href="https://wordpress.org/support/plugin/file-manager-advanced/reviews/?filter=5"><?php _e('Rate Us','file-manager-advanced')?> <img src="<?php echo plugins_url( 'images/5stars.png', __FILE__ );?>" style="width:100px; top: 11px; position: relative;"></a></span>
 </p>
-<?php $this->save();
-echo $this->notice($type,$bool);
+<?php $this->save(); 
+ if(isset($type) && !empty($type)) {
+	 if($type == '1') { ?>
+        <div class="updated notice">
+		  <p><?php echo esc_attr( $message ) ?></p>
+		</div>
+	<?php } else if($type == '2') { ?>
+		<div class="error notice">
+		  <p><?php echo esc_attr( $message ) ?></p>
+		</div>
+	<?php }
+ }
 ?>
 <form action="" method="post">
 <?php  wp_nonce_field( 'fmaform', '_fmaform' ); ?>
@@ -34,11 +44,11 @@ foreach($roles as $key => $role) {
 	$checked = '';
 	if(isset($settings['fma_user_roles'])):
 	if(in_array($key, $settings['fma_user_roles'])) {
-       $checked = 'checked="checked"';
+       $checked = 'checked=checked';
 	}
 	endif;
 	?>
-<input type="checkbox" value="<?php echo $key;?>" name="fma_user_role[]" <?php echo $checked; ?> /> <?php echo $role['name'];?> <br/>
+<input type="checkbox" value="<?php echo esc_attr($key);?>" name="fma_user_role[]" <?php echo esc_attr($checked); ?> /> <?php echo esc_attr($role['name']);?> <br/>
 <?php } ?>
 </td>
 </tr>
@@ -60,7 +70,7 @@ foreach($roles as $key => $role) {
 <td>
 <select name="fma_locale" id="fma_locale">
 <?php foreach($locales as $key => $locale) { ?>
-<option value="<?php echo $locale;?>" <?php echo (isset($settings['fma_locale']) && $settings['fma_locale'] == $locale) ? 'selected="selected"' : '';?>><?php echo $key;?></option>
+<option value="<?php echo esc_attr($locale);?>" <?php echo (isset($settings['fma_locale']) && $settings['fma_locale'] == $locale) ? 'selected="selected"' : '';?>><?php echo esc_attr($key);?></option>
 <?php } ?>
 </select>
 <p class="description"><?php _e('Select file manager advanced language. Default: en (English)','file-manager-advanced')?></p>
@@ -69,17 +79,17 @@ foreach($roles as $key => $role) {
 <tr>
 <th><?php _e('Public Root Path','file-manager-advanced')?></th>
 <td>
-<input name="public_path" type="text" id="public_path" value="<?php echo isset($settings['public_path']) && !empty($settings['public_path']) ? $settings['public_path'] : $path;?>" class="regular-text">
+<input name="public_path" type="text" id="public_path" value="<?php echo isset($settings['public_path']) && !empty($settings['public_path']) ? esc_attr($settings['public_path']) : esc_attr($path);?>" class="regular-text">
 <p class="description"><?php _e('File Manager Advanced Root Path, you can change according to your choice.','file-manager-advanced')?></p>
-<p>Default: <code><?php echo esc_attr__($path, 'file-manager-advanced');?></code></p>
+<p>Default: <code><?php echo esc_attr($path);?></code></p>
 </td>
 </tr>
 <tr>
 <th><?php _e('Files URL','file-manager-advanced')?></th>
 <td>
-<input name="public_url" type="text" id="public_url" value="<?php echo isset($settings['public_url']) && !empty($settings['public_url']) ? $settings['public_url'] : $url;?>" class="regular-text">
+<input name="public_url" type="text" id="public_url" value="<?php echo isset($settings['public_url']) && !empty($settings['public_url']) ? esc_url($settings['public_url']) : esc_url($url);?>" class="regular-text">
 <p class="description"><?php _e('File Manager Advanced Files URL, you can change according to your choice.','file-manager-advanced')?></p>
-<p>Default: <code><?php echo esc_attr__($url, 'file-manager-advanced');?></code></p>
+<p>Default: <code><?php echo esc_url($url);?></code></p>
 </td>
 </tr>
 <tr>

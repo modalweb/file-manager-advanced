@@ -87,7 +87,7 @@ class class_fma_admin_menus {
     */
     public function save() {
 	   if(isset($_POST['submit']) && wp_verify_nonce( $_POST['_fmaform'], 'fmaform' )) {
-		    _e('Saving Options, Please Wait...','file-manager-advanced');
+		    _e('Saving options, Please wait...','file-manager-advanced');
 		   $save = array();
 		   $save['fma_user_roles'] = isset($_POST['fma_user_role']) ? array_map('sanitize_text_field',$_POST['fma_user_role']) : array('administrator');
 		   $save['fma_theme'] = isset($_POST['fma_theme']) ? sanitize_text_field($_POST['fma_theme']) : 'light';
