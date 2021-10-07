@@ -71,7 +71,7 @@ foreach($roles as $key => $role) {
 <td>
 <input name="public_path" type="text" id="public_path" value="<?php echo isset($settings['public_path']) && !empty($settings['public_path']) ? $settings['public_path'] : $path;?>" class="regular-text">
 <p class="description"><?php _e('File Manager Advanced Root Path, you can change according to your choice.','file-manager-advanced')?></p>
-<p>Default: <code><?php echo $path ?></code></p>
+<p>Default: <code><?php echo esc_attr__($path, 'file-manager-advanced');?></code></p>
 </td>
 </tr>
 <tr>
@@ -79,7 +79,7 @@ foreach($roles as $key => $role) {
 <td>
 <input name="public_url" type="text" id="public_url" value="<?php echo isset($settings['public_url']) && !empty($settings['public_url']) ? $settings['public_url'] : $url;?>" class="regular-text">
 <p class="description"><?php _e('File Manager Advanced Files URL, you can change according to your choice.','file-manager-advanced')?></p>
-<p>Default: <code><?php echo $url ?></code></p>
+<p>Default: <code><?php echo esc_attr__($url, 'file-manager-advanced');?></code></p>
 </td>
 </tr>
 <tr>
